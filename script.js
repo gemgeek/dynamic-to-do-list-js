@@ -1,13 +1,11 @@
+// Description: This script adds functionality to a simple task list application.
 document.addEventListener('DOMContentLoaded', function() {
-
     const addButton = document.getElementById('add-task-btn');
-
 
     const taskInput = document.getElementById('task-input');
     const taskList = document.getElementById('task-list');
 
     function addTask() {
-    
         const taskText = taskInput.value.trim();
 
         // Check if taskText is not empty (""). If it is empty, use alert to prompt the user to enter a task.
@@ -27,8 +25,7 @@ document.addEventListener('DOMContentLoaded', function() {
         // Set its textContent to "Remove".
         removeButton.textContent = "Remove";
 
-        // Give it a class name of 'remove-btn'.
-        removeButton.className = 'remove-btn';
+        removeButton.classList.add('remove-btn');
 
         removeButton.onclick = function() {
             taskList.removeChild(listItem); // Removes the list item from the task list
@@ -50,5 +47,6 @@ document.addEventListener('DOMContentLoaded', function() {
         if (event.key === 'Enter') {
             addTask();
         }
-        });
     });
+
+});
