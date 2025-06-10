@@ -5,48 +5,71 @@ document.addEventListener('DOMContentLoaded', function() {
     const taskInput = document.getElementById('task-input');
     const taskList = document.getElementById('task-list');
 
-    function addTask() {
-        const taskText = taskInput.value.trim();
+    let tasksArray = [];
 
-        // Check if taskText is not empty (""). If it is empty, use alert to prompt the user to enter a task.
-        if (taskText === "") {
+    function saveTasks() {
+        
+        localStorage.setItem('tasks', JSON.stringify(tasksArray));
+    }
+
+    function addTask(taskTextParam, saveToLocalStorage = true) {
+        // Ensure taskText is trimmed, even if it comes from loading.
+        const taskText = taskTextParam.trim();
+
+        if (taskText === "" && saveToLocalStorage) {
             alert("Please enter a task.");
-            return; // Exit the function if the input is empty
+            return;
         }
 
         const listItem = document.createElement('li');
+        listItem.textContent = taskText; 
 
-        // Set its textContent to taskText.
-        listItem.textContent = taskText;
-
-        // Create a new button element for removing the task.
         const removeButton = document.createElement('button');
-
-        // Set its textContent to "Remove".
-        removeButton.textContent = "Remove";
-
-        removeButton.classList.add('remove-btn');
+        removeButton.textContent = "Remove"; 
+        removeButton.classList.add('remove-btn'); 
 
         removeButton.onclick = function() {
-            taskList.removeChild(listItem); // Removes the list item from the task list
+            removeTask(listItem, taskText);
         };
 
         // Append the remove button to the li element.
         listItem.appendChild(removeButton);
 
-        // Then append the li to taskList.
+        // Append the new task li to the task list (<ul>).
         taskList.appendChild(listItem);
 
-        // Clear the task input field by setting taskInput.value to an empty string.
-        taskInput.value = "";
+        if (saveToLocalStorage) {
+            tasksArray.push(taskText); 
+            saveTasks(); 
+            taskInput.value = ""; 
+        }
     }
 
-    addButton.addEventListener('click', addTask);
+    function removeTask(listItemToRemove, taskTextToRemove) {
+
+        taskList.removeChild(listItemToRemove);
+
+        tasksArray = tasksArray.filter(task => task !== taskTextToRemove);
+
+    }
+
+    function loadTasks() {
+        const storedTasks = JSON.parse(localStorage.getItem('tasks') || '[]');
+
+        tasksArray = storedTasks;
+
+        tasksArray.forEach(taskText => addTask(taskText, false));
+    }
+
+    addButton.addEventListener('click', function() {
+        addTask(taskInput.value);
+    });
 
     taskInput.addEventListener('keypress', function(event) {
         if (event.key === 'Enter') {
-            addTask();
+            addTask(taskInput.value);
         }
     });
 
+    loadTasks();
 });
